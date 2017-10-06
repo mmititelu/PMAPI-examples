@@ -156,9 +156,11 @@ class PMAPISubscriber
      *
      * @param int $listId
      *
+     * @param array $options
+     *
      * @return int emailOptIn id
      */
-    public function sendOptInEmail($listId)
+    public function sendOptInEmail($listId, $options = array())
     {
         if (!is_numeric($listId) || $listId < 1)
         {
@@ -171,9 +173,13 @@ class PMAPISubscriber
             throw new PMAPISubscriberEmailOptInException ("Subscriber is not subscribed to list '$listId', can not send email optin.");
         }
 
-        $response = $this->request->emailOptIn->post(array(
+        $opt = array(
             'subscription_id' => $this->getListSubscriptionId($listId),
-        ));
+        );
+
+        $options = array_merge($options, $opt);
+
+        $response = $this->request->emailOptIn->post($options);
 
         if ($response->isError)
         {
